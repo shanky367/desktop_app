@@ -1,4 +1,5 @@
 import 'package:desktop_app/landing_screen.dart';
+import 'package:desktop_app/preview.dart';
 import 'package:desktop_app/spalsh_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -62,6 +63,7 @@ class MyApp extends StatelessWidget {
         SplashScreen.id: (context) =>  const SplashScreen(key:null,autoStart: true, ),
         LandingScreen.id: (context) =>  const LandingScreen(key: null,),
         CartScreen.id: (context) =>  const CartScreen(key: null,),
+        PdfPreview11.id: (context) =>  const PdfPreview11(key: null,),
       },
     );
   }

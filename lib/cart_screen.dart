@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:desktop_app/ApiConstants.dart';
+import 'package:desktop_app/preview.dart';
 import 'package:desktop_app/response_add_to_cart.dart';
 import 'package:desktop_app/response_cart_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:printing/printing.dart';
+
 
 class CartScreen extends StatefulWidget {
   static const String id = 'cart_screen';
@@ -21,6 +25,7 @@ class _CartScreenState extends State<CartScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<CartLines> cartItemsList = <CartLines>[];
   bool isLoading = false;
+
 
   @override
   void initState() {
@@ -48,7 +53,7 @@ class _CartScreenState extends State<CartScreen> {
       'x-user-journey-id': '72a6d143-9775-4621-88b0-39e51ab4e9b2'
     };
     var url = Uri.https('api.ibo.com', 's/checkout/api/v2/cart',
-        {'cartId': 'XCE2NkMJIpojx3G02aLz1COid347Ns07'});
+        {'cartId': ApiConstants.CART_ID});
     final response = await http.get(url, headers: requestHeaders);
     if (response.statusCode == 200) {
       // final jsonResponse = jsonDecode(response.body);
@@ -86,9 +91,9 @@ class _CartScreenState extends State<CartScreen> {
       // 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'x-channel-id': 'APP',
+      'x-channel-id': ApiConstants.JOURNEY_ID,
       'x-app-version': '3.8',
-      'x-user-journey-id': '72a6d143-9775-4621-88b0-39e51ab4e9b2'
+      'x-user-journey-id': ApiConstants.JOURNEY_ID
     };
 
     // {Accept: application/json, x-channel-id: APP, x-app-version: 3.8, content-type: application/x-www-form-urlencoded; charset=utf-8}
@@ -104,7 +109,7 @@ class _CartScreenState extends State<CartScreen> {
 
     final http.Response response = await http.delete(
       Uri.parse(
-          'https://api.ibo.com/s/checkout/api/v2/cart/XCE2NkMJIpojx3G02aLz1COid347Ns07/cart-lines/$cartLineId'),
+          'https://api.ibo.com/s/checkout/api/v2/cart/${ApiConstants.CART_ID}/cart-lines/$cartLineId'),
       headers: requestHeaders,
     );
     if (response.statusCode == 200) {
@@ -252,42 +257,49 @@ class _CartScreenState extends State<CartScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: ListView(
                     children: [
-                      ListTile(
-                        contentPadding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+                      const ListTile(
+                        contentPadding: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
                         title: Text("MRP value",style: TextStyle(fontSize: 20,color: Colors.black),),
                         trailing:Text("1000",style: TextStyle(fontSize: 20,color: Colors.grey),) ,
                       ),
-                      ListTile(
-                        contentPadding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+                      const ListTile(
+                        contentPadding: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
                         title: Text("Discount on MRP",style: TextStyle(fontSize: 20,color: Colors.black),),
                         trailing:Text("500",style: TextStyle(fontSize: 20,color: Colors.grey),) ,
                       ),
-                      ListTile(
-                        contentPadding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+                      const ListTile(
+                        contentPadding: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
                         title: Text("IBO price",style: TextStyle(fontSize: 20,color: Colors.black),),
                         trailing:Text("1200",style: TextStyle(fontSize: 20,color: Colors.grey),) ,
                       ),
-                      ListTile(
-                        contentPadding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+                      const ListTile(
+                        contentPadding: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
                         title: Text("Additional discount",style: TextStyle(fontSize: 20,color: Colors.black),),
                         trailing:Text("200",style: TextStyle(fontSize: 20,color: Colors.grey),) ,
                       ),
-                      ListTile(
-                        contentPadding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+                      const ListTile(
+                        contentPadding: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
                         title: Text("Total to pay",style: TextStyle(fontSize: 28,color: Colors.black),),
                         trailing:Text("3500",style: TextStyle(fontSize: 28,color: Colors.grey),) ,
                       ),
                       Container(height: 20,),
                       Card(
-                        child: Container(
-                            color: Colors.red,
-                            height: 55,
-                            child: Center(
-                                child: Text("Print",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18)))),
+                        child: InkWell(
+                          onTap:(){
+                            setState(() {
+                              Navigator.of(context).pushNamed(PdfPreview11.id);
+                            });
+                          },
+                          child: Container(
+                              color: Colors.red,
+                              height: 55,
+                              child: const Center(
+                                  child: Text("Print",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18)))),
+                        ),
                       )
                     ],
                   ),
@@ -295,7 +307,7 @@ class _CartScreenState extends State<CartScreen> {
               ),
             ],
           )
-        : Center(
+        : const Center(
             child: Text("No items added in cart"),
           );
   }
@@ -313,4 +325,5 @@ class _CartScreenState extends State<CartScreen> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
     // _scaffoldKey.currentState?.showSnackBar(SnackBar(content: Text(value)));
   }
+
 }

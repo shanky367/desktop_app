@@ -11,6 +11,8 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'ApiConstants.dart';
+
 class LandingScreen extends StatefulWidget {
   static const String id = 'landing_screen';
 
@@ -298,7 +300,7 @@ class _LandingScreenState extends State<LandingScreen> {
     Map<String, String> requestHeaders = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      'x-channel-id': 'APP',
+      'x-channel-id': ApiConstants.CHHANEL_NAME,
       'x-app-version': '3.8'
     };
     var url = Uri.https('api.ibo.com', 's/catalog/api/v2/search-results', {
@@ -355,11 +357,11 @@ class _LandingScreenState extends State<LandingScreen> {
     Map<String, String> requestHeaders = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      'x-channel-id': 'APP',
+      'x-channel-id': ApiConstants.CHHANEL_NAME,
       'x-app-version': '3.8'
     };
     var url = Uri.https('api.ibo.com', 's/checkout/api/v2/cart',
-        {'cartId': 'XCE2NkMJIpojx3G02aLz1COid347Ns07'});
+        {'cartId': ApiConstants.CART_ID});
     final response = await http.get(url, headers: requestHeaders);
     if (response.statusCode == 200) {
       // final jsonResponse = jsonDecode(response.body);
@@ -492,7 +494,7 @@ double? finalPrice=0.0;
     Map<String, String> requestHeaders = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      'x-channel-id': 'APP',
+      'x-channel-id': ApiConstants.CHHANEL_NAME,
       'x-app-version': '3.8'
     };
     var match = {
@@ -506,7 +508,7 @@ double? finalPrice=0.0;
     //       'cart_lines': '[{offer_id: "${offerId}", quantity: ${qty}], post_code: "560001"',
     //     });
     var url = Uri.https('api.ibo.com', 's/checkout/api/v2/cart',
-        {'cartId': 'XCE2NkMJIpojx3G02aLz1COid347Ns07'});
+        {'cartId': ApiConstants.CART_ID});
     final response = await http.post(url,
         headers: requestHeaders,
         body: json.encode(match),
