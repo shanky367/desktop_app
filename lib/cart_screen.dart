@@ -11,6 +11,13 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:printing/printing.dart';
 
+import 'package:esc_pos_printer/esc_pos_printer.dart';
+import 'dart:typed_data';
+import 'package:flutter/services.dart';
+import 'package:esc_pos_utils/esc_pos_utils.dart';
+import 'package:esc_pos_printer/esc_pos_printer.dart';
+
+
 
 class CartScreen extends StatefulWidget {
   static const String id = 'cart_screen';
@@ -38,6 +45,7 @@ class _CartScreenState extends State<CartScreen> {
 
   Future<void> callapi() async {
     var a = await _fetchCartDetails();
+
   }
 
   _fetchCartDetails() async {
@@ -285,10 +293,23 @@ class _CartScreenState extends State<CartScreen> {
                       Container(height: 20,),
                       Card(
                         child: InkWell(
-                          onTap:(){
-                            setState(() {
-                              Navigator.of(context).pushNamed(PdfPreview11.id);
-                            });
+                          onTap:()async{
+                            // setState(() {
+                            //   Navigator.of(context).pushNamed(PdfPreview11.id);
+                            // });
+
+                            const PaperSize paper = PaperSize.mm80;
+                            final profile = await CapabilityProfile.load();
+                            final printer = NetworkPrinter(paper, profile);
+
+                            final PosPrintResult res = await printer.connect('192.168.0.123', port: 9100);
+
+                            if (res == PosPrintResult.success) {
+                              testReceipt(printer);
+                              printer.disconnect();
+                            }
+
+                            print('Print result: ${res.msg}');
                           },
                           child: Container(
                               color: Colors.red,
@@ -312,6 +333,26 @@ class _CartScreenState extends State<CartScreen> {
           );
   }
 
+  void testReceipt(NetworkPrinter printer) {
+    printer.text(
+        'Regular: aA bB cC dD eE fF gG hH iI jJ kK lL mM nN oO pP qQ rR sS tT uU vV wW xX yY zZ');
+    printer.text('Special 1: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ'
+        );
+    printer.text('Special 2: blåbærgrød',
+        );
+
+    printer.text('Bold text', styles: PosStyles(bold: true));
+    printer.text('Reverse text',);
+    printer.text('Underlined text',linesAfter: 1);
+    printer.text('Align left',);
+    printer.text('Align center', );
+    printer.text('Align right', linesAfter: 1);
+
+    printer.text('Text size 200%',);
+
+    printer.feed(2);
+    printer.cut();
+  }
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
       content: Text(value),
