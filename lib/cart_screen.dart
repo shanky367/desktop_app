@@ -294,22 +294,31 @@ class _CartScreenState extends State<CartScreen> {
                       Card(
                         child: InkWell(
                           onTap:()async{
+                            // http.Response response = await http.get(Uri.parse(
+                            //     'http://www.africau.edu/images/default/sample.pdf'));
+                            // var pdfData = response.bodyBytes;
+                            // await Printing.layoutPdf(onLayout: (format) async => pdfData);
+                            //
+                            final pdf = await rootBundle.load('assets/pdf/pos_bill.pdf');
+                            await Printing.layoutPdf(onLayout: (_) => pdf.buffer.asUint8List());
+
                             // setState(() {
-                            //   Navigator.of(context).pushNamed(PdfPreview11.id);
+                            //   Navigator.of(context).pushNamed(PdfPreview11.id);ssets/
                             // });
 
-                            const PaperSize paper = PaperSize.mm80;
-                            final profile = await CapabilityProfile.load();
-                            final printer = NetworkPrinter(paper, profile);
-
-                            final PosPrintResult res = await printer.connect('192.168.0.123', port: 9100);
-
-                            if (res == PosPrintResult.success) {
-                              testReceipt(printer);
-                              printer.disconnect();
-                            }
-
-                            print('Print result: ${res.msg}');
+                            //
+                            // const PaperSize paper = PaperSize.mm80;
+                            // final profile = await CapabilityProfile.load();
+                            // final printer = NetworkPrinter(paper, profile);
+                            //
+                            // final PosPrintResult res = await printer.connect('192.168.0.123', port: 9100);
+                            //
+                            // if (res == PosPrintResult.success) {
+                            //   testReceipt(printer);
+                            //   printer.disconnect();
+                            // }
+                            //
+                            // print('Print result: ${res.msg}');
                           },
                           child: Container(
                               color: Colors.red,
